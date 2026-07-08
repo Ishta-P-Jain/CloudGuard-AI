@@ -1,43 +1,34 @@
 function SecurityScoreCard({ score }) {
   let risk = "LOW RISK";
-  let color = "#22c55e";
+  let color = "text-emerald-300";
+  let ring = "from-emerald-500/20";
 
   if (score < 80) {
     risk = "MODERATE RISK";
-    color = "#f59e0b";
+    color = "text-amber-300";
+    ring = "from-amber-500/20";
   }
 
   if (score < 50) {
     risk = "HIGH RISK";
-    color = "#ef4444";
+    color = "text-rose-300";
+    ring = "from-rose-500/20";
   }
 
   return (
-    <div
-      style={{
-        background: "#111a2e",
-        border: "1px solid #22304d",
-        borderRadius: "16px",
-        padding: "25px",
-        minWidth: "300px",
-        boxShadow: "0 0 20px rgba(0,0,0,0.3)"
-      }}
-    >
-      <h3 style={{ color: "white" }}>SECURITY RISK SCORE</h3>
+    <div className={`rounded-lg border border-slate-800 bg-gradient-to-br ${ring} to-slate-900 p-6 shadow-xl shadow-slate-950/30`}>
+      <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-300">
+        Security Risk Score
+      </h3>
 
-      <h1
-        style={{
-          fontSize: "72px",
-          margin: "20px 0 10px 0",
-          color: color
-        }}
-      >
+      <div className="mt-5 flex items-end gap-2">
+        <h1 className={`text-6xl font-bold leading-none ${color}`}>
         {score}
       </h1>
+        <p className="pb-2 text-lg text-slate-400">/ 100</p>
+      </div>
 
-      <p style={{ color: "#94a3b8", fontSize: "20px" }}>/ 100</p>
-
-      <h2 style={{ color: color }}>{risk}</h2>
+      <h2 className={`mt-4 text-sm font-bold uppercase tracking-wide ${color}`}>{risk}</h2>
     </div>
   );
 }

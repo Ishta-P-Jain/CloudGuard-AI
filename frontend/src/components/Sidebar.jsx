@@ -2,26 +2,20 @@ import { Link } from "react-router-dom";
 
 export default function Sidebar() {
   return (
-    <div style={styles.sidebar}>
-      <h2>CloudGuard</h2>
+    <aside className="fixed inset-y-0 left-0 hidden w-56 flex-col border-r border-slate-800 bg-slate-950 px-5 py-6 text-white md:flex">
+      <h2 className="mb-8 text-xl font-bold">CloudGuard</h2>
 
-      <Link to="/">Dashboard</Link>
-      <Link to="/scan">Scan</Link>
-      <Link to="/reports">Reports</Link>
-    </div>
+      <nav className="flex flex-col gap-2 text-sm">
+        <Link className="rounded-lg px-3 py-2 text-slate-300 hover:bg-slate-800 hover:text-white" to="/">
+          Dashboard
+        </Link>
+        <Link className="rounded-lg px-3 py-2 text-slate-300 hover:bg-slate-800 hover:text-white" to="/scan">
+          Scan
+        </Link>
+        <Link className="rounded-lg px-3 py-2 text-slate-300 hover:bg-slate-800 hover:text-white" to="/reports">
+          Reports
+        </Link>
+      </nav>
+    </aside>
   );
 }
-
-const styles = {
-  sidebar: {
-    width: "200px",
-    height: "100vh",
-    background: "#111827",
-    color: "white",
-    padding: "20px",
-    display: "flex",
-    flexDirection: "column",
-    gap: "15px",
-    position: "fixed",
-  },
-};

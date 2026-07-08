@@ -3,18 +3,9 @@ function ScanButton({ onScan, loading }) {
     <button
       onClick={onScan}
       disabled={loading}
-      style={{
-        padding: "16px 28px",
-        background: "linear-gradient(90deg, #4f46e5, #ec4899)",
-        border: "none",
-        borderRadius: "12px",
-        color: "white",
-        fontWeight: "bold",
-        fontSize: "16px",
-        cursor: "pointer"
-      }}
+      className="inline-flex min-h-12 items-center justify-center rounded-lg bg-cyan-400 px-6 py-3 text-sm font-bold uppercase tracking-wide text-slate-950 shadow-lg shadow-cyan-950/30 transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:bg-slate-600 disabled:text-slate-300"
     >
-      {loading ? "Scanning..." : "RUN NEW CLOUD SCAN"}
+      {loading ? "Scanning..." : "Run New Cloud Scan"}
     </button>
   );
 }

@@ -5,89 +5,93 @@ import VulnerabilityCard from "../components/VulnerabilityCard";
 import RiskSummaryCard from "../components/RiskSummaryCard";
 import ScanButton from "../components/ScanButton";
 import FindingsCard from "../components/FindingsCard";
-import { useState } from "react";
+import RiskChart from "../components/RiskChart";
+import { checkBackendHealth } from "../api/client";
+import { getScanFindings, startScan } from "../api/scans";
+import { buildSummary, normalizeFindingsResponse, normalizeScanResponse } from "../lib/scanData";
+import { useEffect, useMemo, useState } from "react";
 
 export default function Dashboard() {
-  const [score, setScore] = useState(82);
+  const [score, setScore] = useState(0);
   const [loading, setLoading] = useState(false);
   const [findings, setFindings] = useState([]);
+  const [hasScanned, setHasScanned] = useState(false);
+  const [backendStatus, setBackendStatus] = useState("checking");
+  const [message, setMessage] = useState("");
 
-  const runScan = () => {
+  useEffect(() => {
+    checkBackendHealth()
+      .then(() => setBackendStatus("online"))
+      .catch(() => setBackendStatus("offline"));
+  }, []);
+
+  const runScan = async () => {
     setLoading(true);
+    setMessage("");
 
-    setTimeout(() => {
-      setScore(74);
-      setFindings([
-        { id: 1, title: "Open Port Detected", severity: "High", description: "Port 22 is open to 0.0.0.0/0" },
-        { id: 2, title: "Weak Password", severity: "Medium", description: "Password complexity is not enforced" },
-        { id: 3, title: "Outdated Package", severity: "Low", description: "Vulnerable libraries are in use" },
-      ]);
-      setLoading(false);
-    }, 1500);
-  };
+    try {
+      const scan = normalizeScanResponse(await startScan());
+      let nextFindings = scan.findings;
 
-  const calculateStats = (findingsList) => {
-    const stats = { high: 0, medium: 0, low: 0 };
-    findingsList.forEach((f) => {
-      const severity = (f.risk || f.severity || "").toLowerCase();
-      if (severity === "high") {
-        stats.high++;
-      } else if (severity === "medium") {
-        stats.medium++;
-      } else if (severity === "low") {
-        stats.low++;
+      if (scan.scanId && nextFindings.length === 0) {
+        nextFindings = normalizeFindingsResponse(await getScanFindings(scan.scanId));
       }
-    });
-    return stats;
+
+      const summary = nextFindings.length > 0 ? buildSummary(nextFindings) : scan.summary;
+
+      setScore(scan.score);
+      setFindings(nextFindings);
+      setHasScanned(true);
+      setBackendStatus("online");
+
+      if (!scan.scanId && nextFindings.length === 0) {
+        setMessage("The scan endpoint responded, but Student 2's full scan payload is not ready yet.");
+      } else if (summary.total === 0) {
+        setMessage("Scan completed successfully with no findings.");
+      }
+    } catch {
+      setMessage("Unable to run scan. Check that the backend is running and VITE_API_BASE_URL is correct.");
+      setBackendStatus("offline");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const stats = calculateStats(findings);
+  const stats = useMemo(() => buildSummary(findings), [findings]);
 
   return (
-    <div style={styles.wrapper}>
+    <div className="min-h-screen bg-slate-950 text-white">
       <Sidebar />
 
-      <div style={styles.main}>
-        <Navbar />
+      <div className="md:ml-56">
+        <Navbar backendStatus={backendStatus} />
 
-        <h1 style={styles.title}>Security Dashboard</h1>
+        <main className="px-5 py-6 md:px-8">
+          <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <h1 className="text-3xl font-bold">Security Dashboard</h1>
+              <p className="mt-2 text-slate-400">
+                Run a backend scan and review the latest cloud security findings.
+              </p>
+            </div>
+            <ScanButton onScan={runScan} loading={loading} />
+          </div>
 
-        <div style={styles.grid}>
-          <SecurityScoreCard score={score} />
-          <VulnerabilityCard stats={stats} />
-          <RiskSummaryCard findings={findings} />
-        </div>
+          <div className="grid gap-4 lg:grid-cols-4">
+            <SecurityScoreCard score={score} />
+            <VulnerabilityCard stats={stats} />
+            <RiskSummaryCard summary={stats} />
+            <RiskChart findings={findings} />
+          </div>
 
-        <ScanButton onScan={runScan} loading={loading} />
-
-        <FindingsCard findings={findings} loading={loading} />
+          <FindingsCard
+            findings={findings}
+            hasScanned={hasScanned}
+            loading={loading}
+            message={message}
+          />
+        </main>
       </div>
     </div>
   );
 }
-
-const styles = {
-  wrapper: {
-    display: "flex",
-    background: "#0b1220",
-    color: "white",
-    minHeight: "100vh",
-  },
-
-  main: {
-    marginLeft: "220px",
-    width: "100%",
-    padding: "20px",
-  },
-
-  title: {
-    fontSize: "28px",
-    margin: "10px 0 20px",
-  },
-
-  grid: {
-    display: "flex",
-    gap: "15px",
-    flexWrap: "wrap",
-  },
-};

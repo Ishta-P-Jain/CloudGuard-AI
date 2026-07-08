@@ -1,45 +1,25 @@
-function Navbar() {
+function Navbar({ backendStatus = "checking" }) {
+  const statusStyles = {
+    online: "border-emerald-500/30 bg-emerald-500/10 text-emerald-200",
+    offline: "border-rose-500/30 bg-rose-500/10 text-rose-200",
+    checking: "border-amber-500/30 bg-amber-500/10 text-amber-100",
+  };
+
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        padding: "20px 30px",
-        background: "#081120",
-        borderBottom: "1px solid #22304d"
-      }}
-    >
+    <div className="flex flex-col gap-4 border-b border-slate-800 bg-slate-950/80 px-5 py-5 md:flex-row md:items-center md:justify-between md:px-8">
       <div>
-        <h1 style={{ margin: 0, color: "white", fontSize: "32px" }}>
-          CLOUDGUARD AI
-        </h1>
-        <p style={{ margin: 0, color: "#9ca3af" }}>
-          SECURITY AUDIT DASHBOARD
+        <h1 className="text-2xl font-bold text-white md:text-3xl">CloudGuard AI</h1>
+        <p className="text-sm uppercase tracking-wide text-slate-400">
+          Security Audit Dashboard
         </p>
       </div>
 
-      <div style={{ display: "flex", gap: "15px" }}>
-        <div
-          style={{
-            background: "#14532d",
-            padding: "10px 14px",
-            borderRadius: "10px",
-            color: "#86efac"
-          }}
-        >
-          Backend Status: Online
+      <div className="flex flex-wrap gap-3 text-sm">
+        <div className={`rounded-lg border px-3 py-2 ${statusStyles[backendStatus]}`}>
+          Backend: {backendStatus}
         </div>
-
-        <div
-          style={{
-            background: "#1e3a8a",
-            padding: "10px 14px",
-            borderRadius: "10px",
-            color: "#93c5fd"
-          }}
-        >
-          LocalStack: Running
+        <div className="rounded-lg border border-sky-500/30 bg-sky-500/10 px-3 py-2 text-sky-200">
+          LocalStack Ready
         </div>
       </div>
     </div>
