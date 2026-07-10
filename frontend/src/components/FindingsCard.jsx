@@ -13,7 +13,15 @@ function SeverityBadge({ severity }) {
   );
 }
 
-function FindingsCard({ findings, loading, hasScanned, message }) {
+function FindingsCard({
+  findings,
+  loading,
+  hasScanned,
+  message,
+  explainingFindingId,
+  onExplainFinding,
+  selectedFindingId,
+}) {
   return (
     <div className="mt-6 rounded-lg border border-slate-800 bg-slate-900 shadow-xl shadow-slate-950/30">
       <div className="border-b border-slate-800 px-5 py-4">
@@ -51,17 +59,31 @@ function FindingsCard({ findings, loading, hasScanned, message }) {
                 <th className="px-5 py-3">Service</th>
                 <th className="px-5 py-3">Resource</th>
                 <th className="px-5 py-3">Description</th>
+                <th className="px-5 py-3">AI Action</th>
               </tr>
             </thead>
 
             <tbody>
               {findings.map((item) => (
-                <tr className="border-t border-slate-800" key={item.id}>
+                <tr
+                  className={`border-t border-slate-800 ${selectedFindingId === item.id ? "bg-cyan-400/5" : ""}`}
+                  key={item.id}
+                >
                   <td className="px-5 py-4 font-medium text-white">{item.title}</td>
                   <td className="px-5 py-4"><SeverityBadge severity={item.severity} /></td>
                   <td className="px-5 py-4">{item.service}</td>
                   <td className="px-5 py-4 font-mono text-xs text-slate-300">{item.resourceId}</td>
                   <td className="px-5 py-4 text-slate-300">{item.description}</td>
+                  <td className="px-5 py-4">
+                    <button
+                      className="min-h-9 rounded-lg border border-cyan-400/40 bg-cyan-400/10 px-3 text-xs font-semibold uppercase tracking-wide text-cyan-100 transition hover:bg-cyan-400/20 disabled:cursor-not-allowed disabled:border-slate-700 disabled:bg-slate-800 disabled:text-slate-500"
+                      disabled={Boolean(explainingFindingId)}
+                      onClick={() => onExplainFinding(item)}
+                      type="button"
+                    >
+                      {explainingFindingId === item.id ? "Loading..." : "Explain/Fix"}
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>

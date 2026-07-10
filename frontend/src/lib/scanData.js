@@ -43,6 +43,20 @@ export function normalizeFinding(finding) {
   };
 }
 
+export function normalizeExplanationResponse(response) {
+  return {
+    explanation: response?.explanation || "No explanation was returned.",
+    danger: response?.danger || "No risk detail was returned.",
+    realWorldImpact: response?.real_world_impact || response?.realWorldImpact || "No impact detail was returned.",
+    remediationSteps: Array.isArray(response?.remediation_steps)
+      ? response.remediation_steps
+      : Array.isArray(response?.remediationSteps)
+        ? response.remediationSteps
+        : [],
+    estimatedEffort: response?.estimated_effort || response?.estimatedEffort || "Not specified",
+  };
+}
+
 export function buildSummary(findings) {
   return findings.reduce(
     (summary, finding) => {
@@ -54,4 +68,3 @@ export function buildSummary(findings) {
     { total: 0, critical: 0, high: 0, medium: 0, low: 0 },
   );
 }
-

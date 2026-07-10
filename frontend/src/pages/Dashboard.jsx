@@ -6,9 +6,16 @@ import RiskSummaryCard from "../components/RiskSummaryCard";
 import ScanButton from "../components/ScanButton";
 import FindingsCard from "../components/FindingsCard";
 import RiskChart from "../components/RiskChart";
+import AIExplanationPanel from "../components/AIExplanationPanel";
 import { checkBackendHealth } from "../api/client";
+import { explainFinding } from "../api/findings";
 import { getScanFindings, startScan } from "../api/scans";
-import { buildSummary, normalizeFindingsResponse, normalizeScanResponse } from "../lib/scanData";
+import {
+  buildSummary,
+  normalizeExplanationResponse,
+  normalizeFindingsResponse,
+  normalizeScanResponse,
+} from "../lib/scanData";
 import { useEffect, useMemo, useState } from "react";
 
 export default function Dashboard() {
@@ -18,6 +25,10 @@ export default function Dashboard() {
   const [hasScanned, setHasScanned] = useState(false);
   const [backendStatus, setBackendStatus] = useState("checking");
   const [message, setMessage] = useState("");
+  const [selectedFinding, setSelectedFinding] = useState(null);
+  const [explanation, setExplanation] = useState(null);
+  const [explanationError, setExplanationError] = useState("");
+  const [explainingFindingId, setExplainingFindingId] = useState(null);
 
   useEffect(() => {
     checkBackendHealth()
@@ -42,6 +53,9 @@ export default function Dashboard() {
       setScore(scan.score);
       setFindings(nextFindings);
       setHasScanned(true);
+      setSelectedFinding(null);
+      setExplanation(null);
+      setExplanationError("");
       setBackendStatus("online");
 
       if (!scan.scanId && nextFindings.length === 0) {
@@ -54,6 +68,23 @@ export default function Dashboard() {
       setBackendStatus("offline");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleExplainFinding = async (finding) => {
+    setSelectedFinding(finding);
+    setExplanation(null);
+    setExplanationError("");
+    setExplainingFindingId(finding.id);
+
+    try {
+      const response = await explainFinding(finding.id);
+      setExplanation(normalizeExplanationResponse(response));
+      setBackendStatus("online");
+    } catch {
+      setExplanationError("Unable to load AI explanation. Check that Student 3's Explain & Fix API is running.");
+    } finally {
+      setExplainingFindingId(null);
     }
   };
 
@@ -84,12 +115,28 @@ export default function Dashboard() {
             <RiskChart findings={findings} />
           </div>
 
-          <FindingsCard
-            findings={findings}
-            hasScanned={hasScanned}
-            loading={loading}
-            message={message}
-          />
+          <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_420px]">
+            <FindingsCard
+              explainingFindingId={explainingFindingId}
+              findings={findings}
+              hasScanned={hasScanned}
+              loading={loading}
+              message={message}
+              onExplainFinding={handleExplainFinding}
+              selectedFindingId={selectedFinding?.id}
+            />
+            <AIExplanationPanel
+              error={explanationError}
+              explanation={explanation}
+              finding={selectedFinding}
+              loading={Boolean(explainingFindingId)}
+              onClose={() => {
+                setSelectedFinding(null);
+                setExplanation(null);
+                setExplanationError("");
+              }}
+            />
+          </div>
         </main>
       </div>
     </div>
