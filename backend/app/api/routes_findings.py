@@ -1,9 +1,13 @@
+from datetime import date
+from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from datetime import date
 from typing import List
 
 from app.database import get_db
+from app.models.ai_explanation import AIExplanation
 from app.models.finding import Finding
 from app.models.ai_explanation import AIExplanation
 from app.models.usage_limit import UsageLimit
