@@ -41,6 +41,7 @@ def run_new_scan(db: Session = Depends(get_db)):
         for raw in raw_findings:
             new_finding = Finding(
                 scan_id=new_scan.id,
+                rule_id=raw.get("rule_id", "Unknown"),
                 service=raw.get("service", "Unknown"),
                 resource_id=raw.get("resource_id", "Unknown"),
                 title=raw.get("title", "No Title"),

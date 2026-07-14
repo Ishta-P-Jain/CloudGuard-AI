@@ -22,14 +22,14 @@ def check_db_direct():
         scan_count = db.query(Scan).count()
         finding_count = db.query(Finding).count()
         
-        print(f"✅ Database Connection: Success")
-        print(f"📊 Database Records Count:")
+        print("db_connection: OK")
+        print("Database Records Count:")
         print(f"   - Scans Table: {scan_count} records")
         print(f"   - Findings Table: {finding_count} records")
         
         db.close()
     except Exception as e:
-        print(f"❌ Database connection failed: {e}")
+        print(f"db_connection failed: {e}")
 
 def check_api_endpoints():
     """
@@ -46,15 +46,15 @@ def check_api_endpoints():
             scan_id = scan_data.get("scan_id")
             score = scan_data.get("score")
             summary = scan_data.get("summary", {})
-            print(f"   ✅ Trigger Scan: Success")
-            print(f"   🆔 Generated Scan ID: {scan_id}")
-            print(f"   📈 Calculated Score: {score}/100")
-            print(f"   ⚠️ Findings Summary: {summary}")
+            print("   Trigger Scan: OK")
+            print(f"   Generated Scan ID: {scan_id}")
+            print(f"   Calculated Score: {score}/100")
+            print(f"   Findings Summary: {summary}")
         else:
-            print(f"   ❌ Trigger Scan failed: HTTP {post_response.status_code} - {post_response.text}")
+            print(f"   Trigger Scan failed: HTTP {post_response.status_code} - {post_response.text}")
             return
     except requests.exceptions.ConnectionError:
-        print(f"   ❌ Connection failed: Is uvicorn running on {API_BASE_URL}?")
+        print(f"   Connection failed: Is uvicorn running on {API_BASE_URL}?")
         return
         
     # 2. Test GET /api/scans/latest
@@ -63,11 +63,11 @@ def check_api_endpoints():
         latest_resp = requests.get(f"{API_BASE_URL}/api/scans/latest")
         if latest_resp.status_code == 200:
             latest_data = latest_resp.json()
-            print(f"   ✅ Fetch Latest: Success (Scan ID: {latest_data.get('scan_id')})")
+            print(f"   Fetch Latest: OK (Scan ID: {latest_data.get('scan_id')})")
         else:
-            print(f"   ❌ Fetch Latest failed: HTTP {latest_resp.status_code}")
+            print(f"   Fetch Latest failed: HTTP {latest_resp.status_code}")
     except Exception as e:
-        print(f"   ❌ Fetch Latest query error: {e}")
+        print(f"   Fetch Latest query error: {e}")
 
     # 3. Test GET /api/scans/{scan_id}/findings
     print(f"\n3. Fetching findings for Scan ID: {scan_id} (GET /api/scans/{{scan_id}}/findings)...")
@@ -75,15 +75,15 @@ def check_api_endpoints():
         findings_resp = requests.get(f"{API_BASE_URL}/api/scans/{scan_id}/findings")
         if findings_resp.status_code == 200:
             findings = findings_resp.json()
-            print(f"   ✅ Fetch Findings: Success ({len(findings)} findings returned)")
+            print(f"   Fetch Findings: OK ({len(findings)} findings returned)")
             for i, f in enumerate(findings[:3]):
                 print(f"      - Finding #{i+1}: [{f.get('service')}] {f.get('title')} ({f.get('severity')})")
             if len(findings) > 3:
                 print(f"      - ... and {len(findings) - 3} more.")
         else:
-            print(f"   ❌ Fetch Findings failed: HTTP {findings_resp.status_code}")
+            print(f"   Fetch Findings failed: HTTP {findings_resp.status_code}")
     except Exception as e:
-        print(f"   ❌ Fetch Findings query error: {e}")
+        print(f"   Fetch Findings query error: {e}")
 
 def main():
     print("=== CLOUDGUARD AI - WEEK 3 INTEGRATION DIAGNOSTICS ===")
@@ -93,11 +93,11 @@ def main():
     try:
         ls_resp = requests.get("http://localhost:4566/_localstack/health", timeout=5)
         if ls_resp.status_code == 200:
-            print("✅ LocalStack: Running")
+            print("LocalStack: OK")
         else:
-            print("❌ LocalStack: Not responding healthily")
+            print("LocalStack: Not responding healthily")
     except Exception:
-        print("❌ LocalStack: Connection refused (Ensure Docker Desktop is running & docker compose is up)")
+        print("LocalStack: Connection refused (Ensure Docker Desktop is running & docker compose is up)")
 
     check_api_endpoints()
     check_db_direct()
