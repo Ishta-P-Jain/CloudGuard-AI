@@ -3,13 +3,12 @@ from sqlalchemy import Column, String, Boolean, ForeignKey, JSON
 from sqlalchemy.orm import relationship
 from app.database import Base
 
-from app.models.ai_explanation import AIExplanation
-
 class Finding(Base):
     __tablename__ = "findings"
 
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     scan_id = Column(String, ForeignKey("scans.id", ondelete="CASCADE"), nullable=False)
+    rule_id = Column(String, nullable=False)  # Unique identifier for the security rule (e.g. S3_PUBLIC_BUCKET_ACCESS)
     service = Column(String, nullable=False)
     resource_id = Column(String, nullable=False)
     title = Column(String, nullable=False)
