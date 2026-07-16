@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { downloadReportPdf } from "../api/reports";
 import { toast } from "react-hot-toast";
-import { Download, FileText } from "lucide-react";
+import { FileText } from "lucide-react";
 
 export default function ReportDownloadButton({ scanId, findings, score }) {
   const [downloading, setDownloading] = useState(false);

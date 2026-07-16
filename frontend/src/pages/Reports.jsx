@@ -6,7 +6,7 @@ import { getLatestScan, getScanFindings } from "../api/scans";
 import { checkBackendHealth } from "../api/client";
 import { normalizeScanResponse, normalizeFindingsResponse } from "../lib/scanData";
 import { FileText, ShieldAlert, ArrowRight, ShieldCheck } from "lucide-react";
-import { toast } from "react-hot-toast";
+
 
 export default function Reports() {
   const [latestScan, setLatestScan] = useState(null);
