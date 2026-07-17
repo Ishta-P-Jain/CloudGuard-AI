@@ -19,7 +19,8 @@ def download_scan_report(scan_id: str, db: Session = Depends(get_db)):
             detail="Scan not found.",
         )
 
-    findings = db.query(Finding).filter(Finding.scan_id == scan_id).all()
+    from sqlalchemy.orm import joinedload
+    findings = db.query(Finding).options(joinedload(Finding.ai_explanation)).filter(Finding.scan_id == scan_id).all()
     pdf_buffer = build_scan_pdf(scan, findings)
     filename = f"cloudguard_scan_{scan_id}.pdf"
 
