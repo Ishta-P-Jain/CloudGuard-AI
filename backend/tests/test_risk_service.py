@@ -37,3 +37,16 @@ def test_unknown_severity_does_not_break_scoring():
         "medium": 0,
         "low": 0,
     }
+
+
+def test_empty_findings_returns_perfect_score():
+    result = calculate_score([])
+
+    assert result["score"] == 100
+    assert result["summary"] == {
+        "total": 0,
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+    }

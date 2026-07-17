@@ -3,6 +3,8 @@ import json
 import requests
 from typing import Any, Dict
 
+Groq = None
+
 # Groq API endpoint
 GROQ_API_ENDPOINT = "https://api.groq.com/openai/v1/chat/completions"
 # Using a fast and cost-effective model on Groq
@@ -107,7 +109,7 @@ FALLBACK_EXPLANATIONS: Dict[str, Dict[str, Any]] = {
 }
 
 DEFAULT_FALLBACK = {
-    "explanation": "This resource has a security misconfiguration that should be reviewed and remediated according to cloud security best practices.",
+    "explanation": "Fallback guidance: this resource has a security misconfiguration that should be reviewed and remediated according to cloud security best practices.",
     "danger": "Potential exposure of resources or settings to unauthorized actors.",
     "real_world_impact": "Increased risk of compliance failure, data access, or resource compromise.",
     "remediation_steps": [
@@ -193,6 +195,12 @@ def explain_finding(finding: Dict[str, Any]) -> Dict[str, Any]:
         
     # Return rule-based fallback as safe assurance
     return FALLBACK_EXPLANATIONS.get(rule_id, DEFAULT_FALLBACK)
+
+def generate_ai_explanation(finding: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Compatibility wrapper used by newer tests and guide instructions.
+    """
+    return explain_finding(finding)
 
 def application_json_headers():
     return "application/json"
