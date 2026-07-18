@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { X, LayoutDashboard, ShieldAlert, FileBarChart2 } from "lucide-react";
+import { X, LayoutDashboard, ShieldAlert, FileBarChart2, History } from "lucide-react";
 
 export default function Sidebar({ isOpen, onClose }) {
   const location = useLocation();
@@ -8,6 +8,7 @@ export default function Sidebar({ isOpen, onClose }) {
     { name: "Dashboard", path: "/", icon: LayoutDashboard },
     { name: "Scan", path: "/scan", icon: ShieldAlert },
     { name: "Reports", path: "/reports", icon: FileBarChart2 },
+    { name: "History", path: "/history", icon: History },
   ];
 
   return (

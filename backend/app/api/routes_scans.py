@@ -99,3 +99,29 @@ def get_latest_scan(db: Session = Depends(get_db)):
             "low": latest_scan.low_count
         }
     }
+
+
+from typing import List
+
+@router.get("", response_model=List[ScanResponse])
+def get_all_scans(db: Session = Depends(get_db)):
+    """
+    Retrieves a list of all historical security scan summaries, sorted by creation date (newest first).
+    """
+    scans = db.query(Scan).order_by(Scan.created_at.desc()).all()
+    response = []
+    for s in scans:
+        response.append({
+            "scan_id": s.id,
+            "status": s.status,
+            "score": s.score,
+            "summary": {
+                "total": s.total_findings,
+                "critical": s.critical_count,
+                "high": s.high_count,
+                "medium": s.medium_count,
+                "low": s.low_count
+            }
+        })
+    return response
+
