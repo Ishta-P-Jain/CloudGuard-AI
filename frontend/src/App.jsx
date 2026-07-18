@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import Scan from "./pages/Scan";
 import Reports from "./pages/Reports";
+import History from "./pages/History";
 import { Toaster } from "react-hot-toast";
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
         <Route path="/" element={<Dashboard />} />
         <Route path="/scan" element={<Scan />} />
         <Route path="/reports" element={<Reports />} />
+        <Route path="/history" element={<History />} />
       </Routes>
     </BrowserRouter>
   );
