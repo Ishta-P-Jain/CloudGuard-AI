@@ -67,10 +67,6 @@ export default function Sidebar({ isOpen, onClose }) {
           })}
         </nav>
 
-        <div className="mt-auto rounded-lg border border-slate-800 bg-slate-900/50 p-4 text-xs text-slate-500">
-          <p className="font-semibold text-slate-400">Student 1 - Week 5</p>
-          <p className="mt-1">Cloud Security Misconfiguration Scanner</p>
-        </div>
       </aside>
     </>
   );
