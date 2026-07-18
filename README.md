@@ -2,6 +2,8 @@
 
 CloudGuard AI is a lightweight, AI-powered cloud security posture management (CSPM) tool. It automatically scans cloud infrastructures, calculates security risk scores, lists detailed vulnerability findings, and leverages Groq's LLM API to provide on-demand remediation guidelines—caching the AI explanations locally to control API costs.
 
+Live on : https://cloudguard-ai-three.vercel.app/
+
 ---
 
 ## 🚀 Key Features
